@@ -1,11 +1,18 @@
 package com.patasunidasapi.patasunidasapi.model;
 
 import jakarta.persistence.Embeddable;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Embeddable
 public class GeoLocation {
     private Double latitude;
     private Double longitude;
+
+    public GeoLocation(Double latitude, Double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     public Double getLatitude() {
         return latitude;

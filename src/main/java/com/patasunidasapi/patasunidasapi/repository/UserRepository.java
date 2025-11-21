@@ -2,7 +2,6 @@ package com.patasunidasapi.patasunidasapi.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.patasunidasapi.patasunidasapi.model.User;
-import java.util.List;
 import java.util.Optional;
 
 

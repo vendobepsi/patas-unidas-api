@@ -1,6 +1,11 @@
 package com.patasunidasapi.patasunidasapi.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import org.hibernate.annotations.Type;
+
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -24,7 +29,8 @@ public class AnimalProfile {
     private Long createdByUserId;
     @Column(name = "managed_by_user_id")
     private Long managedByUserId;
-
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
     private ArrayList<String> photos;
     @Embedded
     private GeoLocation location;
@@ -36,6 +42,10 @@ public class AnimalProfile {
     private AnimalSize size;
     private AnimalSex sex;
     private String approximateAge;
+
+    public Long getId(){
+        return this.id;
+    }
 
     public Long getCreatedByUserId() {
         return createdByUserId;

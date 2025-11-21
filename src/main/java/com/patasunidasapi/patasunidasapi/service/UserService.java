@@ -1,6 +1,5 @@
 package com.patasunidasapi.patasunidasapi.service;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,17 +31,9 @@ public class UserService {
         userDto.setEmail(user.getEmail());
         userDto.setId(Long.toString(user.getId()));
         userDto.setToken(token);
-        switch(user.getUserType()){
-            case UserType.COMMON:
-            userDto.setUserType("common");
-            break;
-            case UserType.PROTECTOR_ONG:
-            userDto.setUserType("protector_ong");
-            break;
-            case UserType.ADOPTER:
-            userDto.setUserType("adopter");
-            break;
-        }
+        userDto.setUserType(user.getUserType());
+        userDto.setCity(user.getCity());
+        userDto.setState(user.getState());
         userDto.setVerifiedProtector(user.isVerifiedProtector());
         userDto.setProfilePictureUrl(user.getProfilePictureUrl());
         userDto.setHousingType(user.getHousingType());
@@ -50,6 +41,7 @@ public class UserService {
 
         return userDto;
     }
+    //convert de registro
     private User convertToEntity(RegistrarUsuarioRequestDto dto){
         User user = new User();
         user.setName(dto.getName());
@@ -57,17 +49,7 @@ public class UserService {
         user.setSenha(dto.getSenha()); 
         user.setCity(dto.getCity());
         user.setState(dto.getState());
-        switch(dto.getUserType()){
-            case "commom":
-            user.setUserType(UserType.COMMON);
-            break;
-            case "protector_ong":
-            user.setUserType(UserType.PROTECTOR_ONG);
-            break;
-            case "adopter":
-            user.setUserType(UserType.ADOPTER);
-            break;
-        }
+        user.setUserType(dto.getUserType());
         user.setHousingType(dto.getHousingType());
         user.setHasOtherPets(dto.isHasOtherPets());
         user.setVerifiedProtector(false);

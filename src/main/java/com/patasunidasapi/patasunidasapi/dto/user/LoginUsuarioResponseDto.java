@@ -2,6 +2,9 @@ package com.patasunidasapi.patasunidasapi.dto.user;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import com.patasunidasapi.patasunidasapi.model.UserType;
+
 import lombok.AllArgsConstructor;
 
 
@@ -17,7 +20,7 @@ public class LoginUsuarioResponseDto {
 
     private String city;
     private String state;
-    private String userType;
+    private UserType userType;
     private boolean isVerifiedProtector;
     private String profilePictureUrl;
 

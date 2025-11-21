@@ -25,13 +25,11 @@ import org.springframework.security.core.Authentication;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private final UserRepository userRepository;
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserDetailServiceImpl userDetailServiceImpl;
-    public UserController(UserRepository ur, UserService us, AuthenticationManager authenticationManager, JwtService jwtService, UserDetailServiceImpl userDetailServiceImpl){
-        this.userRepository = ur;
+    public UserController(UserService us, AuthenticationManager authenticationManager, JwtService jwtService, UserDetailServiceImpl userDetailServiceImpl){
         this.userService = us;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
@@ -46,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/register-new-user")
-    public ResponseEntity<Boolean> postMethodName(@RequestBody RegistrarUsuarioRequestDto dto) {
+    public ResponseEntity<Boolean> registerNewUser(@RequestBody RegistrarUsuarioRequestDto dto) {
         if(userService.isEmailAvailable(dto.getEmail())){
             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 
         }
@@ -68,7 +66,7 @@ public class UserController {
         
         String jwtToken = jwtService.generateToken(request.getEmail());
 
-        // 4. Retorna o token para o frontend
+        //retorna o token
         return ResponseEntity.ok(userService.ConvertToDto(userDetailServiceImpl.loadUserByUsername(request.getEmail()), jwtToken));
     }
     
