@@ -55,7 +55,7 @@ public class AnimalProfileService {
         animalProfile.setLocation(new GeoLocation(dto.getLatitude(), dto.getLongitude()));
         ArrayList<String> imagepaths = dto.getPhotos();
         for (String string : imagepaths) {
-            animalProfile.addPhoto(string);
+            animalProfile.addPhoto(ImageConverter.decodeB64(string));
         }
         animalProfile.setProvisionalName(dto.getProvisionalName());
         animalProfile.setSex(dto.getSex());
@@ -93,7 +93,13 @@ public class AnimalProfileService {
             animal.setDescription(animalDto.getDescription());
         if(animalDto.getStatus() != null)
             animal.setStatus(animalDto.getStatus());
-
+        if(animalDto.getPhotos() != null){
+            ArrayList<String> photos= animalDto.getPhotos();
+            animal.setPhotos(new ArrayList<String>());
+            for ( String photo : photos) {
+                animal.addPhoto(ImageConverter.decodeB64(photo));
+            }
+        }
         if (animalDto.getLatitude() != null && animalDto.getLongitude() != null) 
             animal.setLocation(new GeoLocation(animalDto.getLatitude(), animalDto.getLongitude()));
         
