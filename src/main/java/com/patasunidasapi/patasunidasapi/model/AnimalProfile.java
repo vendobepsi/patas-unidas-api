@@ -114,4 +114,8 @@ public class AnimalProfile {
         this.approximateAge = approximateAge;
     }
 
+    public void addPhoto(String photo){
+        photos.add(photo);
+    }
+
 }

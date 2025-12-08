@@ -3,6 +3,7 @@ package com.patasunidasapi.patasunidasapi.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.AtualizarAnimalProfileRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.BuscarAnimalProfileResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.RegistrarAnimalProfileRequestDto;
@@ -88,4 +89,11 @@ public class AnimalProfileController {
 
         return ResponseEntity.ok(profilesdto);
     }
+
+    @GetMapping("/image-{path}")
+    public ResponseEntity<String> getImage(@PathVariable String path) {
+        
+        return ResponseEntity.ok(ImageConverter.encodeB64(path));
+    }
+    
 }

@@ -7,7 +7,6 @@ import com.patasunidasapi.patasunidasapi.model.AnimalSex;
 import com.patasunidasapi.patasunidasapi.model.AnimalSize;
 import com.patasunidasapi.patasunidasapi.model.AnimalStatus;
 
-import jakarta.persistence.Embedded;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,10 +16,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RegistrarAnimalProfileRequestDto {
     private ArrayList<String> photos;
-    @Embedded
 
     private Long createdByUserId;
-
     private Double latitude;
     private Double longitude;
     private AnimalStatus status;

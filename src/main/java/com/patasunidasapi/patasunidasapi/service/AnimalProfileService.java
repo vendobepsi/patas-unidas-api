@@ -1,5 +1,6 @@
 package com.patasunidasapi.patasunidasapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.patasunidasapi.patasunidasapi.Utility.DateTimeConverter;
+import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.AtualizarAnimalProfileRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.BuscarAnimalProfileResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.RegistrarAnimalProfileRequestDto;
@@ -51,7 +53,10 @@ public class AnimalProfileService {
         animalProfile.setCreatedAt(dto.getCreatedAt());
         animalProfile.setDescription(dto.getDescription());
         animalProfile.setLocation(new GeoLocation(dto.getLatitude(), dto.getLongitude()));
-        animalProfile.setPhotos(dto.getPhotos());
+        ArrayList<String> imagepaths = dto.getPhotos();
+        for (String string : imagepaths) {
+            animalProfile.addPhoto(string);
+        }
         animalProfile.setProvisionalName(dto.getProvisionalName());
         animalProfile.setSex(dto.getSex());
         animalProfile.setSize(dto.getSize());
