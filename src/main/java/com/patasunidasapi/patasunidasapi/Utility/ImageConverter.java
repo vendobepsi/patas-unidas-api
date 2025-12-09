@@ -9,34 +9,47 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ImageConverter {
     
-    //decode b64 to image, save and return path
-    public static String decodeB64 (String photo) {
-        UUID uuid = UUID.randomUUID();
-        String uuidS = uuid.toString();
-        byte[] decodedImg = Base64.getDecoder().decode(photo.getBytes(StandardCharsets.UTF_8));
+private final String UPLOAD_DIR = "./src/main/resources/static/uploads";
 
-        Path imagepath = Paths.get("./resources/imageDir", uuidS.concat(".jpg"));
-        try{
-            Files.write(imagepath, decodedImg);
-        }catch(IOException e){
-            
+    //decode b64 to image, save and return path
+    public String decodeB64 (String photoBase64) throws IOException {
+
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
 
+        if (photoBase64.contains(",")) {
+            photoBase64 = photoBase64.split(",")[1];
+        }
 
+        String uuid = UUID.randomUUID().toString();
+        String filename = uuid + ".jpg";
 
-        return uuidS;
+        try {
+            byte[] decodedImg = Base64.getDecoder().decode(photoBase64);
+            Path filePath = uploadPath.resolve(filename);
+            Files.write(filePath, decodedImg);
+        } catch(IllegalArgumentException e) {
+            throw new IOException("String Base64 Inválida", e);
+        }
+        
+        return uuid;
+
     }
 
-    public static String encodeB64(String path) {
-        try{
-            byte[] image = Files.readAllBytes(Paths.get("./resources/imageDir", path));
-            return Base64.getEncoder().encodeToString(image);
-
-        }catch(IOException e){
-            
+    public byte[] getImageBytes(String fileName) throws IOException {
+        Path filePath = Paths.get(UPLOAD_DIR, fileName + ".jpg");
+        
+        if (!Files.exists(filePath)) {
+             throw new IOException("Imagem não encontrada: " + fileName);
         }
-        return path;
+        
+        return Files.readAllBytes(filePath);
     }
 }

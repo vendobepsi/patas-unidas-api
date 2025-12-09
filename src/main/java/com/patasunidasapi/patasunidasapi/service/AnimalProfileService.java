@@ -1,5 +1,6 @@
 package com.patasunidasapi.patasunidasapi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,10 +21,13 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class AnimalProfileService {
+
+    private final ImageConverter imageConverter;
     private final AnimalProfileRepository animalProfileRepository;
 
-    public AnimalProfileService(AnimalProfileRepository animalProfileRepository) {
+    public AnimalProfileService(AnimalProfileRepository animalProfileRepository, ImageConverter imageConverter) {
         this.animalProfileRepository = animalProfileRepository;
+        this.imageConverter = imageConverter;
     }
 
     public List<AnimalProfile> findAllProfiles() {
@@ -45,7 +49,7 @@ public class AnimalProfileService {
     }
     
     //convert de registro
-    public AnimalProfile convertToEntity(RegistrarAnimalProfileRequestDto dto){
+    public AnimalProfile convertToEntity(RegistrarAnimalProfileRequestDto dto) throws IOException{
         AnimalProfile animalProfile = new AnimalProfile();
         animalProfile.setCreatedByUserId(dto.getCreatedByUserId());
         animalProfile.setManagedByUserId(dto.getCreatedByUserId());
@@ -53,10 +57,7 @@ public class AnimalProfileService {
         animalProfile.setCreatedAt(dto.getCreatedAt());
         animalProfile.setDescription(dto.getDescription());
         animalProfile.setLocation(new GeoLocation(dto.getLatitude(), dto.getLongitude()));
-        ArrayList<String> imagepaths = dto.getPhotos();
-        for (String string : imagepaths) {
-            animalProfile.addPhoto(ImageConverter.decodeB64(string));
-        }
+        animalProfile.setPhotos(photosDtoHandleRequest(dto.getPhotos()));
         animalProfile.setProvisionalName(dto.getProvisionalName());
         animalProfile.setSex(dto.getSex());
         animalProfile.setSize(dto.getSize());
@@ -84,7 +85,7 @@ public class AnimalProfileService {
     }
 
     @Transactional
-    public AnimalProfile updatProfile(Long profileId, AtualizarAnimalProfileRequestDto animalDto){
+    public AnimalProfile updateProfile(Long profileId, AtualizarAnimalProfileRequestDto animalDto) throws IOException{
 
         AnimalProfile animal = animalProfileRepository.findById(profileId).orElseThrow(() -> new NoSuchElementException("Perfil não encontrado com esse ID: " + profileId));
         if(animalDto.getProvisionalName() != null)
@@ -94,15 +95,34 @@ public class AnimalProfileService {
         if(animalDto.getStatus() != null)
             animal.setStatus(animalDto.getStatus());
         if(animalDto.getPhotos() != null){
-            ArrayList<String> photos= animalDto.getPhotos();
-            animal.setPhotos(new ArrayList<String>());
-            for ( String photo : photos) {
-                animal.addPhoto(ImageConverter.decodeB64(photo));
-            }
+            animal.setPhotos(photosDtoHandleRequest(animalDto.getPhotos()));
         }
         if (animalDto.getLatitude() != null && animalDto.getLongitude() != null) 
             animal.setLocation(new GeoLocation(animalDto.getLatitude(), animalDto.getLongitude()));
         
         return animalProfileRepository.save(animal);
+    }
+    //converte todo o array e não resolve mais nada TO-DO apagar as que n estiverem mais salvas em um animal profile sei la nao vai pra frente mesmo esse projeto
+    public ArrayList<String> photosDtoHandleRequest (ArrayList <String> photos) throws IOException {
+        ArrayList<String> fotoshandler = new ArrayList<>();
+
+        try {
+            for (String foto : photos) {
+                fotoshandler.add(imageConverter.decodeB64(foto));
+            }
+
+        } catch (IOException e) {
+            throw new IOException("Erro ao tentar salvar foto", e);
+        }
+        return fotoshandler;
+    }
+
+    public byte[] getImage(String fileName) throws IOException {
+        try {
+            return imageConverter.getImageBytes(fileName);
+        } catch (Exception e) {
+            throw new IOException();
+        }
+        
     }
 }

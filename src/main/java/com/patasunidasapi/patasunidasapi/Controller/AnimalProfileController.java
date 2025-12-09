@@ -10,11 +10,13 @@ import com.patasunidasapi.patasunidasapi.dto.animalprofile.RegistrarAnimalProfil
 import com.patasunidasapi.patasunidasapi.model.AnimalProfile;
 import com.patasunidasapi.patasunidasapi.service.AnimalProfileService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -58,7 +60,7 @@ public class AnimalProfileController {
     @PatchMapping("/alter-{id}")
     public ResponseEntity<AnimalProfile> updateAnimalProfile(@PathVariable Long id, @RequestBody AtualizarAnimalProfileRequestDto dto){
         try{
-            AnimalProfile updatedProfile = animalProfileService.updatProfile(id, dto);
+            AnimalProfile updatedProfile = animalProfileService.updateProfile(id, dto);
 
             return ResponseEntity.ok(updatedProfile);
         } catch (NoSuchElementException e) {
@@ -90,10 +92,17 @@ public class AnimalProfileController {
         return ResponseEntity.ok(profilesdto);
     }
 
-    @GetMapping("/image-{path}")
-    public ResponseEntity<String> getImage(@PathVariable String path) {
-        
-        return ResponseEntity.ok(ImageConverter.encodeB64(path));
+    @GetMapping("/image/{fileName}") 
+    public ResponseEntity<byte[]> getImage(@PathVariable String fileName) {
+        try {
+            byte[] imageBytes = animalProfileService.getImage(fileName);
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(imageBytes);
+                    
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
-    
 }
