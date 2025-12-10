@@ -56,7 +56,15 @@ public class AnimalProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @GetMapping("{id}")
+    public ResponseEntity<BuscarAnimalProfileResponseDto> getAnimalById(@PathVariable Long id) {
+
+
+        return ResponseEntity.ok(animalProfileService.getAnimal(id));
+    }
     
+
+
     @PatchMapping("/alter-{id}")
     public ResponseEntity<AnimalProfile> updateAnimalProfile(@PathVariable Long id, @RequestBody AtualizarAnimalProfileRequestDto dto){
         try{

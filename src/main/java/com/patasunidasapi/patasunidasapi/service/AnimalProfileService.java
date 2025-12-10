@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
@@ -177,5 +178,11 @@ public class AnimalProfileService {
 
     return RAIO_TERRA * c; // Resultado em metros
 }
+
+    public BuscarAnimalProfileResponseDto getAnimal (Long id) {
+        Optional<AnimalProfile> animal = animalProfileRepository.findById(id);
+       
+        return convertToDto(animal.get());
+    }
 
 }
