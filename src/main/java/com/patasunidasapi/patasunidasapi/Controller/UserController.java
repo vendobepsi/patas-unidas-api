@@ -64,7 +64,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginUsuarioResponseDto> authenticate(@RequestBody LoginUsuarioRequestDto request) {
-        
+        System.out.println(">>> CHEGOU NO CONTROLLER! Email recebido: " + request.getEmail());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(), 
