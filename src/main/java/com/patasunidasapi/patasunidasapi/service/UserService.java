@@ -1,11 +1,16 @@
 package com.patasunidasapi.patasunidasapi.service;
 
 
+import java.io.IOException;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioResponseDto;
+import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.RegistrarUsuarioRequestDto;
 import com.patasunidasapi.patasunidasapi.model.User;
 import com.patasunidasapi.patasunidasapi.model.UserType;
@@ -16,14 +21,17 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private ImageConverter imageConverter;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtService jwtService;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, ImageConverter imageConverter){
         this.userRepository = userRepository;
+        this.imageConverter = imageConverter;
     }
+    //convert de login
     public LoginUsuarioResponseDto ConvertToDto(User user, String token){
         LoginUsuarioResponseDto userDto = new LoginUsuarioResponseDto();
 
@@ -41,12 +49,31 @@ public class UserService {
 
         return userDto;
     }
+    //convert de reference
+    public ReferenceUsuarioResponseDto ConvertToDto(Long id){
+        if (id == null) {
+        throw new IllegalArgumentException("O ID informado é nulo.");
+}
+        User user = userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado com id: " + id));
+        ReferenceUsuarioResponseDto userDto = new ReferenceUsuarioResponseDto(
+        user.getName(),
+        user.getProfilePictureUrl(),
+        user.getId()
+    );
+
+        return userDto;
+        }
+        
     //convert de registro
-    private User convertToEntity(RegistrarUsuarioRequestDto dto){
+    private User convertToEntity(RegistrarUsuarioRequestDto dto) throws IOException{
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setSenha(dto.getSenha()); 
+        if(dto.getUserPhotoUrl() != null){
+            user.setProfilePictureUrl(imageConverter.decodeB64(dto.getUserPhotoUrl()));
+        }
         user.setCity(dto.getCity());
         user.setState(dto.getState());
         user.setUserType(dto.getUserType());
@@ -56,7 +83,7 @@ public class UserService {
         return user;
     }
     @Transactional
-    public User registerNewUser(RegistrarUsuarioRequestDto dto){
+    public User registerNewUser(RegistrarUsuarioRequestDto dto)throws IOException{
         User usertoregister = convertToEntity(dto);
 
         String hashedpass = passwordEncoder.encode(usertoregister.getSenha());

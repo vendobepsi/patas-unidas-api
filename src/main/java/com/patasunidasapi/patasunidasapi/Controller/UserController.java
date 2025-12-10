@@ -8,12 +8,14 @@ import org.springframework.stereotype.Controller;
 
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioResponseDto;
+import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.RegistrarUsuarioRequestDto;
 import com.patasunidasapi.patasunidasapi.repository.UserRepository;
 import com.patasunidasapi.patasunidasapi.service.JwtService;
 import com.patasunidasapi.patasunidasapi.service.UserDetailServiceImpl;
 import com.patasunidasapi.patasunidasapi.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,12 +46,19 @@ public class UserController {
     }
 
     @PostMapping("/register-new-user")
-    public ResponseEntity<Boolean> registerNewUser(@RequestBody RegistrarUsuarioRequestDto dto) {
+    public ResponseEntity<?> registerNewUser(@RequestBody RegistrarUsuarioRequestDto dto) {
         if(userService.isEmailAvailable(dto.getEmail())){
             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 
         }
+        try {
+            userService.registerNewUser(dto);
 
-        userService.registerNewUser(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro ao processar imagem: " + e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -66,9 +75,16 @@ public class UserController {
         
         String jwtToken = jwtService.generateToken(request.getEmail());
 
-        //retorna o token
+        //retorna o user e o token
         return ResponseEntity.ok(userService.ConvertToDto(userDetailServiceImpl.loadUserByUsername(request.getEmail()), jwtToken));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReferenceUsuarioResponseDto> getReference(@PathVariable Long id) {
+
+        return ResponseEntity.ok(userService.ConvertToDto(id));
+    }
+    
     
     
 }
