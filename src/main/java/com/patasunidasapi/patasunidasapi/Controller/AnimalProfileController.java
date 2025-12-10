@@ -7,6 +7,7 @@ import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.AtualizarAnimalProfileRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.BuscarAnimalProfileResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.RegistrarAnimalProfileRequestDto;
+import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.model.AnimalProfile;
 import com.patasunidasapi.patasunidasapi.service.AnimalProfileService;
 
@@ -56,12 +57,15 @@ public class AnimalProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @GetMapping("{id}")
-    public ResponseEntity<BuscarAnimalProfileResponseDto> getAnimalById(@PathVariable Long id) {
-
-
-        return ResponseEntity.ok(animalProfileService.getAnimal(id));
-    }
+    @GetMapping("/{id}")
+public ResponseEntity<BuscarAnimalProfileResponseDto> getReference(
+        @PathVariable Long id,
+        @RequestParam(required = false) Double latitude,  // Query Param opcional
+        @RequestParam(required = false) Double longitude // Query Param opcional
+) {
+    // Agora você precisa atualizar seu Service para receber esses valores
+    return ResponseEntity.ok(animalProfileService.convertToDto(animalProfileService.getAnimal(id), latitude, longitude));
+}
     
 
 

@@ -85,7 +85,25 @@ public class AnimalProfileService {
         dto.setSize( animal.getSize());
         dto.setSex( animal.getSex());
         dto.setApproximateAge(animal.getApproximateAge());
-
+        
+         return dto;
+    }
+    public BuscarAnimalProfileResponseDto convertToDto(AnimalProfile animal, double latitude, double longitude){
+        BuscarAnimalProfileResponseDto dto = new BuscarAnimalProfileResponseDto();
+        dto.setId(animal.getId());
+        dto.setCreatedByUserId(animal.getCreatedByUserId());
+        dto.setManagedByUserId( animal.getManagedByUserId());
+        dto.setPhotos(animal.getPhotos());
+        dto.setLatitude( animal.getLocation().getLatitude());
+        dto.setLongitude( animal.getLocation().getLongitude());
+        dto.setStatus( animal.getStatus());
+        dto.setCreatedAt( animal.getCreatedAt());
+        dto.setProvisionalName( animal.getProvisionalName());
+        dto.setDescription( animal.getDescription());
+        dto.setSize( animal.getSize());
+        dto.setSex( animal.getSex());
+        dto.setApproximateAge(animal.getApproximateAge());
+        dto.setApproximateDistance(calcularDistancia(latitude, longitude, dto.getLatitude(), dto.getLongitude()));
          return dto;
     }
 
@@ -179,10 +197,10 @@ public class AnimalProfileService {
     return RAIO_TERRA * c; // Resultado em metros
 }
 
-    public BuscarAnimalProfileResponseDto getAnimal (Long id) {
+    public AnimalProfile getAnimal (Long id) {
         Optional<AnimalProfile> animal = animalProfileRepository.findById(id);
        
-        return convertToDto(animal.get());
+        return animal.get();
     }
 
 }

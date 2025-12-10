@@ -2,6 +2,9 @@ package com.patasunidasapi.patasunidasapi.service;
 
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
+import com.patasunidasapi.patasunidasapi.dto.user.AtualizarPhotoDto;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.RegistrarUsuarioRequestDto;
@@ -114,4 +118,39 @@ public class UserService {
         return false;
         
     }
+    public void updateUserPhoto(Long id, AtualizarPhotoDto dto) {
+    // 1. Busca o usuário no banco (se não achar, estoura erro)
+    User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+    // 2. Altera APENAS o campo desejado na memória do Java
+    user.setProfilePictureUrl(dto.getProfilePictureUrl());
+
+    // 3. Salva de volta. O JPA detecta a mudança e faz o Update.
+    userRepository.save(user);
+}
+public void deleteUserPhoto(Long userId) {
+    // 1. Busca o usuário
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+    // 2. Se tiver foto, apaga o arquivo físico
+    String nomeArquivoAntigo = user.getProfilePictureUrl();
+    
+    if (nomeArquivoAntigo != null && !nomeArquivoAntigo.isEmpty()) {
+        try {
+            // Ajuste o caminho igual ao do seu ImageConverter
+            Path caminhoArquivo = Paths.get("./src/main/resources/static/uploads", nomeArquivoAntigo + ".jpg");
+            Files.deleteIfExists(caminhoArquivo);
+        } catch (Exception e) {
+            // Se der erro ao apagar o arquivo, apenas loga e segue a vida (não trava o banco)
+            System.err.println("Erro ao apagar arquivo: " + e.getMessage());
+        }
+    }
+
+    // 3. Limpa o campo no banco de dados
+    user.setProfilePictureUrl(null); // ou "" se preferir
+    userRepository.save(user);
+}
+
 }

@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 
+import com.patasunidasapi.patasunidasapi.dto.user.AtualizarPhotoDto;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
@@ -14,7 +15,10 @@ import com.patasunidasapi.patasunidasapi.repository.UserRepository;
 import com.patasunidasapi.patasunidasapi.service.JwtService;
 import com.patasunidasapi.patasunidasapi.service.UserDetailServiceImpl;
 import com.patasunidasapi.patasunidasapi.service.UserService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -84,7 +88,18 @@ public class UserController {
 
         return ResponseEntity.ok(userService.ConvertToDto(id));
     }
+
+    @PatchMapping("/{id}/update-photo")
+    public ResponseEntity<Void> updateUserPhoto(@PathVariable Long id, @RequestBody AtualizarPhotoDto dto){
+        userService.updateUserPhoto(id, dto);
+        return ResponseEntity.noContent().build();
+    }
     
+    @DeleteMapping("/{id}/delete-photo")
+    public ResponseEntity<Void> updateUserPhoto(@PathVariable Long id){
+        userService.deleteUserPhoto(id);
+        return ResponseEntity.noContent().build();
+    }
     
     
 }
