@@ -105,4 +105,12 @@ public class AnimalProfileController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/proximos")
+    public ResponseEntity<List<BuscarAnimalProfileResponseDto>> listarPorProximidade(
+        @RequestParam(required = false) Double latitude,
+        @RequestParam(required = false) Double longitude) {
+    
+    return ResponseEntity.ok(animalProfileService.buscarAnimaisProximos(latitude, longitude));
+    }
 }

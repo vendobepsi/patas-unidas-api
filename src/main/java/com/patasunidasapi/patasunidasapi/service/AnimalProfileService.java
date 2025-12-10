@@ -2,8 +2,10 @@ package com.patasunidasapi.patasunidasapi.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -68,9 +70,20 @@ public class AnimalProfileService {
 
     //convert de response para busca
     public BuscarAnimalProfileResponseDto convertToDto(AnimalProfile animal){
-        BuscarAnimalProfileResponseDto dto = new BuscarAnimalProfileResponseDto(animal.getId(), animal.getCreatedByUserId(), animal.getManagedByUserId(),
-        animal.getPhotos(), animal.getLocation().getLatitude(), animal.getLocation().getLongitude(), animal.getStatus(), animal.getCreatedAt(),
-         animal.getProvisionalName(), animal.getDescription(), animal.getSize(), animal.getSex(), animal.getApproximateAge());
+        BuscarAnimalProfileResponseDto dto = new BuscarAnimalProfileResponseDto();
+        dto.setId(animal.getId());
+        dto.setCreatedByUserId(animal.getCreatedByUserId());
+        dto.setManagedByUserId( animal.getManagedByUserId());
+        dto.setPhotos(animal.getPhotos());
+        dto.setLatitude( animal.getLocation().getLatitude());
+        dto.setLongitude( animal.getLocation().getLongitude());
+        dto.setStatus( animal.getStatus());
+        dto.setCreatedAt( animal.getCreatedAt());
+        dto.setProvisionalName( animal.getProvisionalName());
+        dto.setDescription( animal.getDescription());
+        dto.setSize( animal.getSize());
+        dto.setSex( animal.getSex());
+        dto.setApproximateAge(animal.getApproximateAge());
 
          return dto;
     }
@@ -116,13 +129,53 @@ public class AnimalProfileService {
         }
         return fotoshandler;
     }
-
+    //passando a responsabilidade pro service
     public byte[] getImage(String fileName) throws IOException {
         try {
             return imageConverter.getImageBytes(fileName);
         } catch (Exception e) {
             throw new IOException();
         }
-        
     }
+
+    public List<BuscarAnimalProfileResponseDto> buscarAnimaisProximos(Double userLat, Double userLong) {
+    // 1. Busca todos os animais (ou filtra por status antes de trazer, ex: apenas AVAILABLE)
+    List<AnimalProfile> animais = animalProfileRepository.findAll(); 
+
+    // 2. Converte para DTO e calcula a distância
+    List<BuscarAnimalProfileResponseDto> dtos = animais.stream().map(animal -> {
+        BuscarAnimalProfileResponseDto dto = convertToDto(animal); // Seu método converter existente
+        
+        if (userLat != null && userLong != null && animal.getLocation().getLatitude() != null && animal.getLocation().getLongitude() != null) {
+            double distancia = calcularDistancia(userLat, userLong, animal.getLocation().getLatitude(), animal.getLocation().getLongitude());
+            dto.setApproximateDistance(distancia);
+        }
+        return dto;
+    }).collect(Collectors.toList());
+
+    // 3. Ordena a lista (Menor distância primeiro)
+    if (userLat != null && userLong != null) {
+        dtos.sort(Comparator.comparingDouble(d -> {
+            if (d.getApproximateDistance() == null) return Double.MAX_VALUE; // Joga pro fim se não tiver lat/long
+            return d.getApproximateDistance();
+        }));
+    }
+
+    return dtos;
+    }
+    private double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
+    final int RAIO_TERRA = 6371000; // Raio da Terra em metros
+
+    double dLat = Math.toRadians(lat2 - lat1);
+    double dLon = Math.toRadians(lon2 - lon1);
+
+    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+               Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+               Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return RAIO_TERRA * c; // Resultado em metros
+}
+
 }

@@ -15,6 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BuscarAnimalProfileResponseDto {
     private Long id;
     private Long createdByUserId;
@@ -30,6 +31,7 @@ public class BuscarAnimalProfileResponseDto {
     private AnimalSize size;
     private AnimalSex sex;
     private String approximateAge;
+    private Double approximateDistance;
 
     
 }
