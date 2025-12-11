@@ -44,8 +44,11 @@ public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter){
                 .requestMatchers(HttpMethod.POST, "/user/register-new-user").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user/check-email").permitAll()
                 .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/animalprofile/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/animalprofile/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/animalprofile/**").permitAll()
+
                 .anyRequest().authenticated()
             );
 
