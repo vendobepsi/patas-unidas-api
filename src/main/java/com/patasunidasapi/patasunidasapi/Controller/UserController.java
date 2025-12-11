@@ -3,6 +3,7 @@ package com.patasunidasapi.patasunidasapi.Controller;
 import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -101,5 +102,17 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
     
-    
+    @GetMapping("/image/{fileName}") 
+    public ResponseEntity<byte[]> getImage(@PathVariable String fileName) {
+        try {
+            byte[] imageBytes = userService.getImage(fileName);
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(imageBytes);
+                    
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

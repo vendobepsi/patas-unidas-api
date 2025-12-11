@@ -154,4 +154,12 @@ public void deleteUserPhoto(Long userId) {
     userRepository.save(user);
 }
 
+public byte[] getImage(String fileName) throws IOException {
+        try {
+            return imageConverter.getImageBytes(fileName);
+        } catch (Exception e) {
+            throw new IOException();
+        }
+    }
+
 }
