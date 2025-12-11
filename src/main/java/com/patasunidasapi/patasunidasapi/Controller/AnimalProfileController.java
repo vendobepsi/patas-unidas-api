@@ -75,11 +75,11 @@ public ResponseEntity<BuscarAnimalProfileResponseDto> getReference(
 
 
     @PatchMapping("/alter-{id}")
-    public ResponseEntity<AnimalProfile> updateAnimalProfile(@PathVariable Long id, @RequestBody AtualizarAnimalProfileRequestDto dto){
+    public ResponseEntity<Void> updateAnimalProfile(@PathVariable Long id, @RequestBody AtualizarAnimalProfileRequestDto dto){
         try{
             AnimalProfile updatedProfile = animalProfileService.updateProfile(id, dto);
 
-            return ResponseEntity.ok(updatedProfile);
+            return ResponseEntity.ok().build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {

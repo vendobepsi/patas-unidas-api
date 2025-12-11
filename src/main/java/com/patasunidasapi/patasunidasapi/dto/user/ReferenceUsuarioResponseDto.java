@@ -10,5 +10,6 @@ import lombok.Setter;
 public class ReferenceUsuarioResponseDto {
     private String name;
     private String profilePictureUrl;
+    private String phone;
     private Long id;
 }

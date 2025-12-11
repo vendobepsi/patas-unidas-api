@@ -1,5 +1,7 @@
 package com.patasunidasapi.patasunidasapi.Controller;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -88,7 +90,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/update-photo")
-    public ResponseEntity<Void> updateUserPhoto(@PathVariable Long id, @RequestBody AtualizarPhotoDto dto){
+    public ResponseEntity<Void> updateUserPhoto(@PathVariable Long id, @RequestBody AtualizarPhotoDto dto) throws IOException{
         userService.updateUserPhoto(id, dto);
         return ResponseEntity.noContent().build();
     }
