@@ -3,7 +3,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.patasunidasapi.patasunidasapi.model.UserType;
 
 import lombok.AllArgsConstructor;
 

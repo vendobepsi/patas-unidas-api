@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.patasunidasapi.patasunidasapi.Utility.DateTimeConverter;
 import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.AtualizarAnimalProfileRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.BuscarAnimalProfileResponseDto;
@@ -19,18 +18,21 @@ import com.patasunidasapi.patasunidasapi.dto.animalprofile.RegistrarAnimalProfil
 import com.patasunidasapi.patasunidasapi.model.AnimalProfile;
 import com.patasunidasapi.patasunidasapi.model.GeoLocation;
 import com.patasunidasapi.patasunidasapi.repository.AnimalProfileRepository;
-
+import com.patasunidasapi.patasunidasapi.repository.ImageStoreRepository;
 import jakarta.transaction.Transactional;
 
 @Service
 public class AnimalProfileService {
 
+    private final ImageStoreRepository imageStoreRepository;
+
     private final ImageConverter imageConverter;
     private final AnimalProfileRepository animalProfileRepository;
 
-    public AnimalProfileService(AnimalProfileRepository animalProfileRepository, ImageConverter imageConverter) {
+    public AnimalProfileService(AnimalProfileRepository animalProfileRepository, ImageConverter imageConverter, ImageStoreRepository imageStoreRepository) {
         this.animalProfileRepository = animalProfileRepository;
         this.imageConverter = imageConverter;
+        this.imageStoreRepository = imageStoreRepository;
     }
 
     public List<AnimalProfile> findAllProfiles() {
@@ -203,4 +205,20 @@ public class AnimalProfileService {
         return animal.get();
     }
 
+    public void deletarAnimal(Long id) {
+    // 1. Busca o animal (precisamos dos dados dele antes de apagar)
+    AnimalProfile animal = animalProfileRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Animal não encontrado com id: " + id));
+
+    // 2. Apaga as imagens associadas na tabela image_store
+    if (animal.getPhotos() != null && !animal.getPhotos().isEmpty()) {
+        for (String photoUuid : animal.getPhotos()) {
+            // O UUID que está na lista 'photos' é a chave primária na tabela 'image_store'
+            imageStoreRepository.deleteById(photoUuid);
+        }
+    }
+
+    // 3. Finalmente, apaga o perfil do animal
+    animalProfileRepository.delete(animal);
+    }
 }

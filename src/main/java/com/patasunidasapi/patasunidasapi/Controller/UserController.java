@@ -4,14 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.stereotype.Controller;
 
 import com.patasunidasapi.patasunidasapi.dto.user.AtualizarPhotoDto;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.RegistrarUsuarioRequestDto;
-import com.patasunidasapi.patasunidasapi.repository.UserRepository;
 import com.patasunidasapi.patasunidasapi.service.JwtService;
 import com.patasunidasapi.patasunidasapi.service.UserDetailServiceImpl;
 import com.patasunidasapi.patasunidasapi.service.UserService;

@@ -26,6 +26,8 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String senha;
+
+    private String phone;
     
     private String city;
     private String State;
@@ -124,5 +126,11 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +16,6 @@ import com.patasunidasapi.patasunidasapi.dto.user.LoginUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.user.RegistrarUsuarioRequestDto;
 import com.patasunidasapi.patasunidasapi.model.User;
-import com.patasunidasapi.patasunidasapi.model.UserType;
 import com.patasunidasapi.patasunidasapi.repository.UserRepository;
 
 import jakarta.transaction.Transactional;

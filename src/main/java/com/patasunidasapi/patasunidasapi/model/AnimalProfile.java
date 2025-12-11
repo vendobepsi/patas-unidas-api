@@ -1,6 +1,5 @@
 package com.patasunidasapi.patasunidasapi.model;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.hibernate.annotations.Type;
