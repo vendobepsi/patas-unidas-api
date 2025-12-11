@@ -61,7 +61,14 @@ public ResponseEntity<BuscarAnimalProfileResponseDto> getReference(
         @PathVariable Long id,
         @RequestParam(required = false) Double latitude,  
         @RequestParam(required = false) Double longitude 
-) {
+    ) {
+    // CORREÇÃO: Verifica se lat/long são nulos antes de chamar o serviço
+    if (latitude == null || longitude == null) {
+        // Chama o método simples que não calcula distância
+        return ResponseEntity.ok(animalProfileService.convertToDto(animalProfileService.getAnimal(id)));
+    }
+    
+    // Chama o método com cálculo de distância apenas se tiver coordenadas
     return ResponseEntity.ok(animalProfileService.convertToDto(animalProfileService.getAnimal(id), latitude, longitude));
 }
 
