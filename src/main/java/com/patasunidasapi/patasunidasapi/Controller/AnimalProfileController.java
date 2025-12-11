@@ -3,11 +3,9 @@ package com.patasunidasapi.patasunidasapi.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.patasunidasapi.patasunidasapi.Utility.ImageConverter;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.AtualizarAnimalProfileRequestDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.BuscarAnimalProfileResponseDto;
 import com.patasunidasapi.patasunidasapi.dto.animalprofile.RegistrarAnimalProfileRequestDto;
-import com.patasunidasapi.patasunidasapi.dto.user.ReferenceUsuarioResponseDto;
 import com.patasunidasapi.patasunidasapi.model.AnimalProfile;
 import com.patasunidasapi.patasunidasapi.service.AnimalProfileService;
 
@@ -19,6 +17,7 @@ import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,13 +59,19 @@ public class AnimalProfileController {
     @GetMapping("/{id}")
 public ResponseEntity<BuscarAnimalProfileResponseDto> getReference(
         @PathVariable Long id,
-        @RequestParam(required = false) Double latitude,  // Query Param opcional
-        @RequestParam(required = false) Double longitude // Query Param opcional
+        @RequestParam(required = false) Double latitude,  
+        @RequestParam(required = false) Double longitude 
 ) {
-    // Agora você precisa atualizar seu Service para receber esses valores
     return ResponseEntity.ok(animalProfileService.convertToDto(animalProfileService.getAnimal(id), latitude, longitude));
 }
+
+    @DeleteMapping("/delete-{id}")
+    public ResponseEntity<Void> deleteAnimalProfile(@PathVariable Long id) {
     
+    animalProfileService.deletarAnimal(id);
+    
+    return ResponseEntity.noContent().build();
+}
 
 
     @PatchMapping("/alter-{id}")

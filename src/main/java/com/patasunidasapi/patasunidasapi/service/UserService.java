@@ -35,7 +35,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.imageConverter = imageConverter;
     }
-    //convert de login
+    //convert de login response
     public LoginUsuarioResponseDto ConvertToDto(User user, String token){
         LoginUsuarioResponseDto userDto = new LoginUsuarioResponseDto();
 
@@ -43,6 +43,7 @@ public class UserService {
         userDto.setEmail(user.getEmail());
         userDto.setId(Long.toString(user.getId()));
         userDto.setToken(token);
+        userDto.setPhone(user.getPhone());
         userDto.setUserType(user.getUserType());
         userDto.setCity(user.getCity());
         userDto.setState(user.getState());
@@ -78,6 +79,7 @@ public class UserService {
         if(dto.getUserPhotoUrl() != null){
             user.setProfilePictureUrl(imageConverter.decodeB64(dto.getUserPhotoUrl()));
         }
+        user.setPhone(dto.getPhone());
         user.setCity(dto.getCity());
         user.setState(dto.getState());
         user.setUserType(dto.getUserType());

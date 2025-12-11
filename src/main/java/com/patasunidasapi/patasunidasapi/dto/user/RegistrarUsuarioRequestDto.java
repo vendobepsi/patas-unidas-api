@@ -14,6 +14,7 @@ public class RegistrarUsuarioRequestDto {
     private String name;
     private String email;
     private String senha;
+    private String phone;
     private String userPhotoUrl;
     private String city;
     private String state;

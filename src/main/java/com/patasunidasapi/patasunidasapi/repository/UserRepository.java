@@ -12,9 +12,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     User findByName(String name);
     boolean existsByEmail(String email);
+
     @Modifying
-    
     @Transactional // Obrigatório para updates/deletes customizados
-    @Query("UPDATE User u SET u.userPhotoUrl = :url WHERE u.id = :id")
+    @Query("UPDATE User u SET u.profilePictureUrl = :url WHERE u.id = :id")
     void updatePhotoUrl(Long id, String url);
 }
