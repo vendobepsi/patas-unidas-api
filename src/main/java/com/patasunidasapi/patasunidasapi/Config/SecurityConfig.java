@@ -40,6 +40,7 @@ public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter){
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             // 3. Configura a Autorização
+            // deixar só register, login e check após manuseio de token no front
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/user/register-new-user").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user/check-email").permitAll()
