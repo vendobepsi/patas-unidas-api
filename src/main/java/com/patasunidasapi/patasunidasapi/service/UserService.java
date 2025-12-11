@@ -64,10 +64,17 @@ public class UserService {
         User user = userRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Usuário não encontrado com id: " + id));
         ReferenceUsuarioResponseDto userDto = new ReferenceUsuarioResponseDto(
+        user.getId(),
         user.getName(),
-        user.getProfilePictureUrl(),
+        user.getEmail(),
         user.getPhone(),
-        user.getId()
+        user.getCity(),
+        user.getState(),
+        user.getUserType(),
+        user.isVerifiedProtector(),
+        user.getProfilePictureUrl(),
+        user.getHousingType(),
+        user.isHasOtherPets()
     );
 
         return userDto;
@@ -159,7 +166,7 @@ public byte[] getImage(String fileName) throws IOException {
             return imageConverter.getImageBytes(fileName);
         } catch (Exception e) {
             throw new IOException();
-        }
+        }  
     }
 
 }
